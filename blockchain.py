@@ -1,10 +1,11 @@
 import hashlib
 import json
+import sys
+import requests
+
 from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
-
-import requests
 from flask import Flask, jsonify, request
 
 
@@ -193,6 +194,7 @@ class Blockchain:
 
 # Instantiate the Node
 app = Flask(__name__)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
 # Generate a globally unique address for this node
 node_identifier = str(uuid4()).replace('-', '')
@@ -232,17 +234,16 @@ def mine():
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     values = request.get_json()
+    print("Received values:", values)
 
-    # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
     if not all(k in values for k in required):
         return 'Missing values', 400
 
-    # Create a new Transaction
     index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
-
     response = {'message': f'Transaction will be added to Block {index}'}
     return jsonify(response), 201
+
 
 
 @app.route('/chain', methods=['GET'])
@@ -298,4 +299,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
 
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)

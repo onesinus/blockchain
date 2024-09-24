@@ -1,0 +1,25 @@
+version: '2'
+services:
+  blockchain1:
+    container_name: 'block_1'
+    build:
+      context: ./
+      dockerfile: Dockerfile    
+    ports:
+      - "81:5000"
+    volumes:
+      - ./blockchain.py:/app/blockchain.py
+    environment:
+      - FLASK_ENV=development  # Set Flask environment to development
+
+  blockchain2:
+    container_name: 'block_2'
+    build:
+      context: ./
+      dockerfile: Dockerfile    
+    ports:
+      - "82:5000"
+    volumes:
+      - ./blockchain.py:/app/blockchain.py
+    environment:
+      - FLASK_ENV=development  # Set Flask environment to development
